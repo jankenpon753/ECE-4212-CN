@@ -1,0 +1,5 @@
+.synctex.gz
+.DS_Store
+_minted*/
+.venv/
+__pycache__/
