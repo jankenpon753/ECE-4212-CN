@@ -1,7 +1,7 @@
-\documentclass[12pt]{article}
-\usepackage[a4paper, total={6in, 9in}]{geometry}
+\documentclass[11pt]{article}
+\usepackage[a4paper, total={6.8in, 9.25in}]{geometry}
 \usepackage{graphicx}
-\graphicspath{ {./images/output/} }
+\graphicspath{ {./assets/images/output/} }
 \usepackage{caption}
 \usepackage[english]{babel}
 \usepackage{titling}
@@ -15,9 +15,9 @@
 
 % \usepackage{lipsum}
 
-\title{Study of Impulse, Step, and Ramp signals and their inter-relationships}
+\title{Study of Different Kinds of Topologies and Their Simulations}
 \author{}
-\date{}
+\date{Experiment Date: December 12, 2025}
 
 \pagenumbering{gobble}
 \begin{document}
@@ -31,6 +31,253 @@
 \pagenumbering{arabic}
 \maketitle
 
+\section{Introduction}
+Network topology represents the geometric arrangement of various elements, such as links and nodes, within a computer network \cite{TopologyStudy}. Selecting an appropriate topology is a fundamental step in network design, as it directly dictates the network's overall performance, cost-efficiency, scalability, and fault tolerance. In this sessional lab, we explore a comprehensive range of configurations—specifically Point-to-Point, Bus, Ring, Star, Tree, Mesh, and Hybrid topologies—to understand their operational strengths and limitations in a controlled environment.
+
+\subsection{Cisco Packet Tracer}
+Cisco Packet Tracer \cite{CiscoPT2024} is a sophisticated network simulation program developed by Cisco Systems to facilitate the experimentation of complex network behaviors. It provides a rich visual environment where users can design, configure, and troubleshoot virtual hardware, including routers, switches, and workstations. For the purpose of this report, Packet Tracer served as the primary tool to simulate real-time data flow via ICMP packets, allowing for the verification of end-to-end connectivity and path analysis through its "Simulation Mode."
+
+\section{Methodology}
+The methodology of this lab involves the systematic construction and testing of seven distinct network architectures. Each topology is evaluated through a three-step validation process: first, the creation of a physical \textbf{Schematic}; second, the execution of \textbf{Message Passing} to confirm successful delivery; and third, the analysis of the \textbf{Event List}, which captures the precise hop-by-hop journey of data through the network infrastructure.
+
+% --- P2P ---
+\subsection{Point-to-Point (P2P) Topology}
+This topology consists of a direct link between two endpoints, ideal for secure communication like leased lines. It offers simplicity, low cost, and guaranteed bandwidth but lacks scalability and redundancy.
+
+The Cisco Packet Tracer simulation shows two workstations connected via Ethernet, with the schematic confirming successful ICMP pings, validating connectivity.
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=.7\textwidth]{1_p2p_schm.png}
+    \caption{P2P Schema}
+\end{figure}
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=\textwidth]{1_p2p_msg.png}
+    \caption{P2P Successful Message Passing}
+\end{figure}
+
+% --- BUS TOPOLOGY SECTION ---
+
+\subsection{Bus Topology}
+A Bus topology is one of the simplest network configurations where all nodes—such as computers, printers, and servers—are connected to a single central cable, often called the "backbone." This backbone serves as the shared communication medium; data transmitted by any node travels along the cable and is received by all other nodes, though only the intended recipient processes the packet. While cost-effective and easy to set up for small networks, it is susceptible to network-wide failure if the central cable is damaged \cite{Tanenbaum2021}.
+
+The following figures illustrate the network simulation: Figure \ref{fig:bus_layout} shows the physical arrangement and the sequence of events during data transmission, while Figure \ref{fig:bus_success} confirms the successful delivery of the simulated message.
+
+\begin{figure}[H]
+    \centering
+    \begin{minipage}{0.55\textwidth}
+        \centering
+        \includegraphics[width=.9\textwidth]{2_bus_schm.png}
+        \caption{Bus Topology Schematic}
+        \label{fig:bus_layout}
+    \end{minipage}
+    \hfill
+    \begin{minipage}{0.4\textwidth}
+        \centering
+        \includegraphics[width=.9\textwidth]{2_bus_event.png}
+        \caption{Bus Event List}
+    \end{minipage}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=\textwidth]{2_bus_msg.png}
+    \caption{Bus Topology: Successful ICMP Message Passing}
+    \label{fig:bus_success}
+\end{figure}
+
+% ----------------------------
+
+% --- RING TOPOLOGY SECTION ---
+
+\subsection{Ring Topology}
+In a Ring topology, each node is connected to exactly two other nodes, forming a continuous circular pathway for signals. Data travels from node to node in one direction (unidirectional) or sometimes two (bidirectional), with each intermediate node acting as a repeater to keep the signal strong. This topology handles high-volume traffic better than a bus network and eliminates the need for a central server to manage connectivity between workstations \cite{Tanenbaum2021}.
+
+The simulation of this topology is documented below. Figure \ref{fig:ring_layout} provides a side-by-side view of the circular node arrangement and the chronological event list of the packet's journey. Figure \ref{fig:ring_success} displays the ICMP status table, verifying that the packet successfully traversed the ring to its destination.
+
+\begin{figure}[H]
+    \centering
+    \begin{minipage}{0.55\textwidth}
+        \centering
+        \includegraphics[width=.9\textwidth]{3_ring_schm.png}
+        \caption{Ring Topology Schematic}
+        \label{fig:ring_layout}
+    \end{minipage}
+    \hfill
+    \begin{minipage}{0.4\textwidth}
+        \centering
+        \includegraphics[width=.9\textwidth]{3_ring_event.png}
+        \caption{Ring Event List}
+    \end{minipage}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=\textwidth]{3_ring_msg.png}
+    \caption{Ring Topology: Successful ICMP Message Passing}
+    \label{fig:ring_success}
+\end{figure}
+
+% ----------------------------
+
+% --- STAR (SWITCH) TOPOLOGY SECTION ---
+
+\subsection{Star Topology (with Switch)}
+The Star topology is the most widely used configuration in modern Ethernet networks. In this setup, every device is connected to a central switch via a dedicated cable. The switch manages the data flow by directing packets only to the target device, which minimizes collisions. If one cable fails, only the node connected to that cable is affected, making the network highly resilient and easy to troubleshoot \cite{Tanenbaum2021}.
+
+\begin{figure}[H]
+    \centering
+    \begin{minipage}{0.55\textwidth}
+        \centering
+        \includegraphics[width=.9\textwidth]{4_star_schm.png}
+        \caption{Star (Switch) Schematic}
+        \label{fig:star_sw_layout}
+    \end{minipage}
+    \hfill
+    \begin{minipage}{0.4\textwidth}
+        \centering
+        \includegraphics[width=.9\textwidth]{4_star_event.png}
+        \caption{Star (Switch) Event List}
+    \end{minipage}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=\textwidth]{4_star_msg.png}
+    \caption{Star (Switch): Successful Message Passing}
+    \label{fig:star_sw_success}
+\end{figure}
+
+% --- STAR (ROUTER) TOPOLOGY SECTION ---
+
+\subsection{Star Topology (with Router)}
+Using a Router as the central hub of a Star topology adds a layer of intelligence to the network, enabling routing between different IP subnets. While a switch connects devices within the same network, the router handles communication between distinct network segments. This setup is typical for small office or home office (SOHO) environments where a single router provides connectivity for multiple local devices to the internet or other networks \cite{Tanenbaum2021}.
+
+\begin{figure}[H]
+    \centering
+    \begin{minipage}{0.55\textwidth}
+        \centering
+        \includegraphics[width=.9\textwidth]{8_routerStar_schm.png}
+        \caption{Star (Router) Schematic}
+        \label{fig:star_rt_layout}
+    \end{minipage}
+    \hfill
+    \begin{minipage}{0.4\textwidth}
+        \centering
+        \includegraphics[width=.9\textwidth]{8_routerStar_event.png}
+        \caption{Star (Router) Event List}
+    \end{minipage}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=\textwidth]{8_routerStar_msg.png}
+    \caption{Star (Router): Successful Message Passing}
+    \label{fig:star_rt_success}
+\end{figure}
+
+% --- TREE TOPOLOGY SECTION ---
+
+\subsection{Tree Topology}
+The Tree topology is a hierarchical structure where central nodes of various star networks are connected to a primary bus or a "root" switch. This creates a tiered architecture, typically consisting of a core layer, distribution layer, and access layer. It is highly scalable, allowing for the easy addition of new branches without disrupting the entire network. However, if the root node or the main backbone fails, the entire branch connected to it loses connectivity \cite{Tanenbaum2021}.
+
+The simulation results are presented below. Figure \ref{fig:tree_layout} displays the hierarchical arrangement of switches and the resulting event log as the packet moves through the branches. Figure \ref{fig:tree_success} provides the confirmation of successful ICMP communication between the chosen source and destination nodes.
+
+\begin{figure}[H]
+    \centering
+    \begin{minipage}{0.55\textwidth}
+        \centering
+        \includegraphics[width=.9\textwidth]{5_tree_schm.png}
+        \caption{Tree Topology Schematic}
+        \label{fig:tree_layout}
+    \end{minipage}
+    \hfill
+    \begin{minipage}{0.4\textwidth}
+        \centering
+        \includegraphics[width=.9\textwidth]{5_tree_event.png}
+        \caption{Tree Event List}
+    \end{minipage}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=\textwidth]{5_tree_msg.png}
+    \caption{Tree Topology: Successful Message Passing}
+    \label{fig:tree_success}
+\end{figure}
+
+% ----------------------------
+
+% --- MESH TOPOLOGY SECTION ---
+
+\subsection{Mesh Topology}
+A Mesh topology is a robust network design where nodes are interconnected, providing multiple redundant paths for data transmission. In a full mesh, every node is connected to every other node, while a partial mesh (as simulated here) connects key nodes to ensure that even if a specific link or switch fails, the network can reroute traffic through an alternative path. This topology offers the highest level of fault tolerance and is commonly used in critical backbone infrastructures and wireless mesh networks \cite{Tanenbaum2021}.
+
+The simulation results, based on the interconnected switch fabric, are shown below. Figure \ref{fig:mesh_layout} demonstrates the complex schematic and the detailed event list showing how packets are handled across multiple switch hops. Figure \ref{fig:mesh_success} displays the ICMP success table for the transfers between PC51 to PC53 and Laptop55 to Laptop52.
+
+\begin{figure}[H]
+    \centering
+    \begin{minipage}{0.6\textwidth}
+        \centering
+        \includegraphics[width=.9\textwidth]{6_mesh_schm.png}
+        \caption{Mesh Topology Schematic}
+        \label{fig:mesh_layout}
+    \end{minipage}
+    \hfill
+    \begin{minipage}{0.35\textwidth}
+        \centering
+        \includegraphics[width=.9\textwidth]{6_mesh_event.png}
+        \caption{Mesh Event List}
+    \end{minipage}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=1\textwidth]{6_mesh_msg.png}
+    \caption{Mesh Topology: Successful Message Passing}
+    \label{fig:mesh_success}
+\end{figure}
+
+% ----------------------------
+
+% --- HYBRID TOPOLOGY SECTION ---
+
+\subsection{Hybrid Topology (Star-Ring)}
+A Hybrid topology is an integration of two or more different topologies. In this specific simulation, a Star topology and a Ring topology are interconnected. This approach allows a network to leverage the centralized management of a Star network for one department while using the efficient, high-traffic handling of a Ring network for another. Hybrid networks are highly flexible and are typically found in large corporate environments where different floors or buildings use different local configurations but must remain part of a single cohesive network \cite{Tanenbaum2021}.
+
+The following figures illustrate the combination of these two architectures. Figure \ref{fig:hybrid_layout} shows the schematic where a central switch (Star) links into a circular node arrangement (Ring), alongside the simulation's event list. Figure \ref{fig:hybrid_success} verifies that packets successfully traverse between these two distinct structural segments.
+
+\begin{figure}[H]
+    \centering
+    \begin{minipage}{0.55\textwidth}
+        \centering
+        \includegraphics[width=.9\textwidth]{7_hybrid_schm.png}
+        \caption{Hybrid (Star-Ring) Schematic}
+        \label{fig:hybrid_layout}
+    \end{minipage}
+    \hfill
+    \begin{minipage}{0.4\textwidth}
+        \centering
+        \includegraphics[width=.9\textwidth]{7_hybrid_event.png}
+        \caption{Hybrid Event List}
+    \end{minipage}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=\textwidth]{7_hybrid_msg.png}
+    \caption{Hybrid Topology: Successful Message Passing}
+    \label{fig:hybrid_success}
+\end{figure}
+
+% ----------------------------
+
+
+\section{Discussion}
+The simulations conducted in this lab highlight the trade-offs inherent in network design. While simpler topologies like Bus and Star are cost-effective and straightforward to implement, they are vulnerable to single points of failure—either the backbone cable or the central hub. In contrast, the Mesh and Tree topologies demonstrated superior scalability and reliability, with the Mesh setup offering the highest fault tolerance due to its redundant paths.
+
+\section{Conclusion}
+Through this sessional lab, we successfully simulated and analyzed seven diverse network topologies. By observing packet propagation across different mediums and examining how central devices like switches and routers manage traffic, we gained a practical understanding of network architecture. The use of Cisco Packet Tracer provided a realistic and iterative environment to bridge the gap between theoretical networking concepts and practical implementation.
 
 
 \bibliographystyle{IEEEtran}
