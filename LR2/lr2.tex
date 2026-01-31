@@ -1,0 +1,112 @@
+\documentclass[11pt]{article}
+\usepackage[a4paper, total={6.8in, 9.25in}]{geometry}
+\usepackage{graphicx}
+\graphicspath{ {./assets/images/output/} }
+\usepackage{caption}
+\usepackage[english]{babel}
+\usepackage{titling}
+\usepackage{float}
+\usepackage{amsmath}
+\usepackage{minted}
+\usepackage{multicol}
+\usepackage{array}
+\usepackage{setspace}
+\usepackage{placeins}
+\usepackage{tabularx}
+\usepackage{booktabs}
+
+% \usepackage{lipsum}
+
+\title{Study of Router-to-Router Connection and Static Routing Simulations}
+\author{}
+\date{}
+
+\pagenumbering{gobble}
+\begin{document}
+\input{cn_cover.tex}
+
+\pagebreak
+
+\tableofcontents
+
+\pagebreak
+\pagenumbering{arabic}
+\maketitle
+
+\section{Theory and Introduction}
+Routing is the fundamental process of directing data packets across an interconnected network from a source node to a destination node through various intermediate devices, primarily routers. This experiment focuses on the Network Layer (Layer 3) of the Open Systems Interconnection (OSI) model, where logical addressing and path determination occur \cite{tanenbaum2021}. Routers serve as the gateways between different subnets; however, they only possess knowledge of networks to which they are physically and directly connected by default.
+
+To facilitate communication across non-adjacent subnets, static routing was implemented. Static routing involves the manual configuration of fixed paths in the routing table by a network administrator \cite{stallings2013}. Unlike dynamic protocols, static routes do not change unless manually reconfigured, making them highly predictable and suitable for smaller topologies where bandwidth overhead must be minimized. The primary mechanism used in this setup is the "Next Hop" logic, which identifies the IP address of the adjacent router's interface as the entry point for data destined for a remote network. This ensures that even when multiple paths exist, data follows a deterministic route defined by the administrator.
+
+\section{Methodology}
+The experiment was conducted in a virtualized environment using Cisco Packet Tracer (Version 9.0) \cite{packettracer2026}. The following expanded steps were executed to establish and validate the network:
+
+\begin{itemize}
+    \item \textbf{Topology Construction:} A multi-router architecture was designed consisting of three routers (Router0, Router1, and Router2), three switches, and six end-devices, including PCs and laptops.
+    \item \textbf{Addressing Scheme:} Three distinct Class A IP subnets (10.0.0.0, 20.0.0.0, and 30.0.0.0) were assigned to the local area networks (LANs) via FastEthernet interfaces.
+    \item \textbf{WAN Configuration:} High-speed Serial interfaces (Se2/0 and Se3/0) were utilized to connect the routers, forming two Wide Area Network (WAN) segments using the 40.0.0.0 and 50.0.0.0 subnets. Clock rates were set on the DCE ends of the serial cables to synchronize data transmission.
+    \item \textbf{Static Route Implementation:} Manual routing entries were programmed into each router's global configuration mode using the \texttt{ip route} command. For instance, Router 0 was configured with routes to the 20.0.0.0 and 30.0.0.0 networks via the next-hop address 40.40.40.2.
+    \item \textbf{Path Validation:} Connectivity was systematically verified using the Internet Control Message Protocol (ICMP) \textit{Ping} utility. To analyze the precise hop-by-hop traversal and confirm that data followed the manually defined paths, the \textit{Tracert} command was executed from end-devices.
+\end{itemize}
+
+\section{Results}
+The addressing scheme and device configurations are summarized in Table 1.
+
+\begin{table}[h!]
+    \centering
+    \caption{Network Addressing Table}
+    \begin{tabular}{@{}lllll@{}}
+        \toprule
+        \textbf{Device} & \textbf{Interface} & \textbf{IPv4 Address} & \textbf{Subnet Mask} & \textbf{Default Gateway} \\ \midrule
+        Router 0        & Fa0/0              & 10.10.10.0            & 255.0.0.0            & N/A                      \\
+        Router 0        & Se2/0              & 40.40.40.1            & 255.0.0.0            & N/A                      \\
+        Router 1        & Fa0/0              & 20.20.20.0            & 255.0.0.0            & N/A                      \\
+        Router 1        & Se2/0              & 40.40.40.2            & 255.0.0.0            & N/A                      \\
+        Router 1        & Se3/0              & 50.50.50.1            & 255.0.0.0            & N/A                      \\
+        Router 2        & Fa0/0              & 30.30.30.0            & 255.0.0.0            & N/A                      \\
+        Router 2        & Se2/0              & 50.50.50.2            & 255.0.0.0            & N/A                      \\
+        PC 11           & NIC                & 10.10.10.1            & 255.0.0.0            & 10.10.10.0               \\
+        PC 21           & NIC                & 20.20.20.1            & 255.0.0.0            & 20.20.20.0               \\
+        PC 32           & NIC                & 30.30.30.2            & 255.0.0.0            & 30.30.30.0               \\ \bottomrule
+    \end{tabular}
+\end{table}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=\textwidth]{network.png}
+    \caption{Network Topology with Multi-Router Configuration}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \begin{minipage}{0.45\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{ip_route.png}
+        \caption{Router 0 CLI: Static and Connected Routes}
+    \end{minipage}
+    \hfill
+    \begin{minipage}{0.45\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{tracert.png}
+        \caption{Tracert Path Analysis from 10.10.10.1 to 30.30.30.2}
+    \end{minipage}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.7\textwidth]{list.png}
+    \caption{Verification of Connectivity and Address Resolution Latency}
+\end{figure}
+
+\section{Discussion}
+The successful implementation of the network was confirmed through detailed analysis of the routing tables and path tracing. As observed in Figure 2, the routing table for Router 0 contains both directly connected routes (labeled 'C') and manually configured static routes (labeled 'S'). The entry \texttt{S 30.0.0.0/8 [1/0] via 40.40.40.2} indicates that traffic destined for the 30.0.0.0 network must be forwarded to Router 1 at 40.40.40.2. A critical observation was the "Failed" status of the first ICMP packet (Figure 4), resulting from Address Resolution Protocol (ARP) timeout. When PC11 pings a device in another subnet, it must resolve the MAC address of its default gateway. The ICMP request is held while the ARP cycle completes, causing the initial ping to expire. Subsequent pings succeed because the gateway's MAC address is cached. The path analysis using \textit{tracert} (Figure 3) verified the routing logic, showing four hops from the local gateway through intermediate routers to the destination, confirming that static routes were correctly executed.
+
+\section{Conclusion}
+The study of router-to-router connectivity through static routing was successfully completed. The implementation demonstrated that while static routing is manageable for small scales, it requires precise "Next Hop" configurations to maintain path integrity. The use of Cisco Packet Tracer provided a realistic environment to observe background control-plane protocols like ARP and their impact on data-plane traffic.
+
+\bibliographystyle{IEEEtran}
+\renewcommand{\bibname}{References}
+\addcontentsline{toc}{section}{References}
+\bibliography{ref}
+
+\end{document}
