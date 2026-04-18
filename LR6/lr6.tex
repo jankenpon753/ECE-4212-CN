@@ -1,0 +1,110 @@
+\documentclass[11pt]{article}
+\usepackage[a4paper, total={6.8in, 9.25in}]{geometry}
+\usepackage{graphicx}
+\graphicspath{ {./assets/images/output/} }
+\usepackage{caption}
+\usepackage[english]{babel}
+\usepackage{titling}
+\usepackage{float}
+\usepackage{amsmath}
+\usepackage{minted}
+\usepackage{multicol}
+\usepackage{array}
+\usepackage{setspace}
+\usepackage{placeins}
+\usepackage{tabularx}
+\usepackage{booktabs}
+\usepackage{tcolorbox}
+\usepackage{subcaption}
+
+\definecolor{verbgray}{gray}{.95}
+\setminted{
+    bgcolor=verbgray,
+    baselinestretch=1,
+    fontsize=\footnotesize,
+    linenos,
+    breaklines=true,
+    breakanywhere=true,
+    xleftmargin=\parindent
+}
+
+% \usepackage{lipsum}
+
+\title{Design and Implementation of Error Detection and Correction Mechanisms using CRC and Hamming Codes}
+\author{}
+\date{}
+
+\pagenumbering{gobble}
+\begin{document}
+\input{cn_cover.tex}
+
+\pagebreak
+
+\tableofcontents
+
+\pagebreak
+\pagenumbering{arabic}
+\maketitle
+
+% --- Theory and Introduction ---
+\section{Theory and Introduction}
+In digital communication systems, data transmitted over noisy channels or stored in unreliable media is susceptible to bit errors. Error detection and correction codes are essential mechanisms employed to ensure data integrity \cite{tanenbaum2021}. This experiment focuses on two fundamental coding techniques: Cyclic Redundancy Check (CRC) for error detection and Hamming Code for single-bit error correction.
+
+Cyclic Redundancy Check (CRC) is a widely used error-detecting code that appends a short check value (redundancy bits) to a data block. It treats binary data as a polynomial and uses modulo-2 arithmetic (XOR operations) for division \cite{geeks_crc}. A generator polynomial (key) is agreed upon by both sender and receiver. It is highly effective at detecting burst errors and is commonly used in network protocols like Ethernet.
+
+Hamming Code, developed by Richard Hamming, is an error-correcting code capable of detecting and correcting single-bit errors \cite{hamming1950}. This is achieved by inserting multiple parity bits at positions that are powers of two (1, 2, 4, 8, etc.). The number of redundant bits $r$ required for $m$ data bits must satisfy the condition: $2^r \ge m + r + 1$. By recalculating these parity bits at the receiver, the exact position of an erroneous bit can be isolated and rectified \cite{geeks_hamming}.
+
+% --- Methodology ---
+\section{Methodology and Implementation}
+The experiment was conducted by implementing software simulations of the CRC and Hamming Code algorithms in Python. The following processes were executed:
+
+\subsection{CRC Implementation Strategy}
+\begin{itemize}
+    \item \textbf{Encoding (Sender):} The original data was appended with $k-1$ zeros, where $k$ is the length of the generator polynomial. Modulo-2 division was performed on the augmented data using the generator polynomial. The resulting remainder was appended to the original data to form the transmitted codeword.
+    \item \textbf{Decoding (Receiver):} Modulo-2 division was performed on the received codeword using the same polynomial. If the final remainder evaluated to zero, the data was accepted as error-free; otherwise, an error was flagged.
+\end{itemize}
+
+\subsection{Hamming Code Implementation Strategy}
+\begin{itemize}
+    \item \textbf{Encoding:} The number of required redundant bits was calculated. The data bits were placed in non-power-of-two positions. Each parity bit was calculated to ensure even parity across its designated checking positions.
+    \item \textbf{Correction:} At the receiver, all parity bits were recalculated. The XOR of the differing parity positions yielded the error location (syndrome), which was subsequently flipped to restore the original data.
+\end{itemize}
+
+\subsection{CRC Simulation Code}
+The Python code utilized to simulate the detailed, step-by-step operations if CRC is provided below:
+\begin{multicols}{2}
+    \inputminted{python3}{./assets/crc_simulation.py}
+\end{multicols}
+
+\subsection{Hamming Code Simulation Code}
+The Python code utilized to simulate the detailed, step-by-step operations if Hamming Code is provided below:
+\begin{multicols}{2}
+    \inputminted{python3}{./assets/hamming_simulation.py}
+\end{multicols}
+
+% --- Results ---
+\section{Results}
+The implemented Python algorithms were executed to simulate data transmission, error injection, and detection/correction. The verbose console outputs are documented below.
+
+\subsection{CRC Simulation Output}
+\inputminted{console}{./assets/images/output/crc_output.txt}
+
+\subsection{Hamming Code Simulation Output}
+\inputminted{console}{./assets/images/output/hamming_output.txt}
+
+% --- Discussion ---
+\section{Discussion}
+The simulations provided a detailed operational view of both error-handling mechanisms. During the CRC analysis, the modulo-2 division was observed step-by-step. It was verified that appending the calculated remainder (\texttt{001}) to the original data resulted in a codeword (\texttt{100100001}) that became perfectly divisible by the polynomial (\texttt{1101}), yielding a final remainder of \texttt{000} at the receiver. When an intentional fault was introduced (flipping the 3rd bit), the division logic was disrupted, producing a non-zero remainder (\texttt{110}), thereby successfully alerting the system to the corruption.
+
+In the Hamming Code analysis, the capability to not only detect but correct a fault was demonstrated. Four parity bits ($P1, P2, P4, P8$) were utilized to secure the 7-bit data block. Upon intentionally corrupting the 7th bit from the right, the receiver's recalculation of the parities yielded a syndrome of \texttt{0111} (decimal 7). This syndrome accurately pinpointed the precise location of the error, allowing the algorithm to automatically flip the bit and reconstruct the original transmitted codeword (\texttt{10101001110}) without requiring data retransmission.
+
+% --- Conclusion ---
+\section{Conclusion}
+The design and implementation of error detection and correction mechanisms were successfully achieved using Python simulations. The CRC method proved highly efficient for detecting errors utilizing modulo-2 arithmetic, making it ideal for network protocols where retransmission is acceptable. Conversely, the Hamming Code implementation successfully localized and rectified single-bit errors through parity synchronization. This confirmed that while Hamming Code introduces a larger logarithmic overhead, its forward error correction (FEC) capabilities are invaluable in scenarios where retransmission is costly or impossible.
+
+\bibliographystyle{IEEEtran}
+\renewcommand{\bibname}{References}
+\addcontentsline{toc}{section}{References}
+\bibliography{ref}
+
+\end{document}

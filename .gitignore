@@ -5,3 +5,4 @@ _minted*/
 __pycache__/
 *.bbl
 ~$*
+*.docx

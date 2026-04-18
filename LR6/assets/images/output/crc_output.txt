@@ -1,0 +1,52 @@
+--- SENDER SIDE ---
+Original Data: 100100
+Key (Polynomial): 1101
+Appended Data (with 3 zeros): 100100000
+
+Calculating Remainder:
+    [DIV] Initial Dividend: 100100000
+    [DIV] Divisor:          1101
+    [DIV] 1001 XOR 1101 -> 1000 (pulled down 0)
+    [DIV] 1000 XOR 1101 -> 1010 (pulled down 0)
+    [DIV] 1010 XOR 1101 -> 1110 (pulled down 0)
+    [DIV] 1110 XOR 1101 -> 0110 (pulled down 0)
+    [DIV] 0110 XOR 00000000 -> 1100 (pulled down 0)
+    [DIV] Final Step: 1100 XOR 1101 -> 001
+
+Calculated Remainder: 001
+Transmitted Codeword: 100100001
+
+>>> SCENARIO 1: Transmission without errors
+--- RECEIVER SIDE ---
+Received Codeword: 100100001
+
+Performing Modulo-2 Division on Received Data:
+    [DIV] Initial Dividend: 100100001
+    [DIV] Divisor:          1101
+    [DIV] 1001 XOR 1101 -> 1000 (pulled down 0)
+    [DIV] 1000 XOR 1101 -> 1010 (pulled down 0)
+    [DIV] 1010 XOR 1101 -> 1110 (pulled down 0)
+    [DIV] 1110 XOR 1101 -> 0110 (pulled down 0)
+    [DIV] 0110 XOR 00000000 -> 1101 (pulled down 1)
+    [DIV] Final Step: 1101 XOR 1101 -> 000
+
+Final Remainder: 000
+[RESULT] SUCCESS: The remainder is zero. No errors detected.
+
+>>> SCENARIO 2: Transmission WITH errors (Fault Simulation)
+(Simulating noise... flipping a bit: 100100001 -> 101100001)
+--- RECEIVER SIDE ---
+Received Codeword: 101100001
+
+Performing Modulo-2 Division on Received Data:
+    [DIV] Initial Dividend: 101100001
+    [DIV] Divisor:          1101
+    [DIV] 1011 XOR 1101 -> 1100 (pulled down 0)
+    [DIV] 1100 XOR 1101 -> 0010 (pulled down 0)
+    [DIV] 0010 XOR 000000 -> 0100 (pulled down 0)
+    [DIV] 0100 XOR 0000000 -> 1000 (pulled down 0)
+    [DIV] 1000 XOR 1101 -> 1011 (pulled down 1)
+    [DIV] Final Step: 1011 XOR 1101 -> 110
+
+Final Remainder: 110
+[RESULT] ERROR DETECTED: The remainder is non-zero. The data was corrupted during transmission.

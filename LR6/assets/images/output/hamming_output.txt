@@ -1,0 +1,31 @@
+--- SENDER SIDE ---
+Original Data: 1011001
+Data Bits (m): 7
+Redundant Parity Bits required (r): 4
+Data with empty parity bits: 10101000100
+Calculating Parity Bits (Even Parity):
+  P1 checks: pos 1 (val 0), pos 3 (val 1), pos 5 (val 0), pos 7 (val 1), pos 9 (val 1), pos 11 (val 1)
+  => P1 is set to 0
+  P2 checks: pos 2 (val 0), pos 3 (val 1), pos 6 (val 0), pos 7 (val 1), pos 10 (val 0), pos 11 (val 1)
+  => P2 is set to 1
+  P4 checks: pos 4 (val 0), pos 5 (val 0), pos 6 (val 0), pos 7 (val 1)
+  => P4 is set to 1
+  P8 checks: pos 8 (val 0), pos 9 (val 1), pos 10 (val 0), pos 11 (val 1)
+  => P8 is set to 0
+
+Transmitted Codeword: 10101001110
+
+>>> Simulating transmission noise...
+Original sent: 10101001110
+Received     : 10100001110
+
+--- RECEIVER SIDE: Error Checking ---
+Recalculating parity bits over received data:
+  P1 parity check evaluates to: 1
+  P2 parity check evaluates to: 1
+  P4 parity check evaluates to: 1
+  P8 parity check evaluates to: 0
+
+[RESULT] Syndrome is 0111. Error detected at position 7 (from the right).
+-> Fixing error... Flipping bit at index 4 (which is currently '0')
+-> Corrected Data Codeword: 10101001110
